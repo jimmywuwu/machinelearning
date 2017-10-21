@@ -20,7 +20,7 @@ def polynomail_fit(x,y,x_test,y_test,order,lam):
         for x in range(1,shp+1):
             for yy in range(x,shp+1):
                 x_train.insert(i,"x"+str(x)+"x"+str(yy),x_train.iloc[:,x]*x_train.iloc[:,yy])
-                x_test.insert(i,"x"+str(x)+"x"+str(yy),x_test.iloc[:,1]*x_test.iloc[:,yy])
+                x_test.insert(i,"x"+str(x)+"x"+str(yy),x_test.iloc[:,x]*x_test.iloc[:,yy])
                 i=i+1
         coeficient=beta_ridge(x_train,y,lam)
         RMS=(np.dot(x_train,coeficient)-y)
@@ -61,7 +61,7 @@ Y_train=y_class1_train.append(y_class2_train).append(y_class3_train)
 X_test=x_class1_test.append(x_class2_test).append(x_class3_test)
 Y_test=y_class1_test.append(y_class2_test).append(y_class3_test)
 
-polynomail_fit(X_train,Y_train,X_test,Y_test,2,0)
+polynomail_fit(X_train,Y_train,X_test,Y_test,2,0)["RMS"]
 polynomail_fit(X_train.iloc[:,[0,1,2]],Y_train,X_test.iloc[:,[0,1,2]],Y_test,2,0)["RMS_t"]
 polynomail_fit(X_train.iloc[:,[0,1,3]],Y_train,X_test.iloc[:,[0,1,3]],Y_test,2,0)["RMS_t"]
 polynomail_fit(X_train.iloc[:,[1,2,3]],Y_train,X_test.iloc[:,[1,2,3]],Y_test,2,0)["RMS_t"]
