@@ -24,13 +24,13 @@ def logistic_w(training_t,training_x):
 	hess_mat=[]
 	gradient_out=[]
 	#while(-np.matrix([([t[j][i]*math.log(Y[j][i]) for i in range(3)]) for j in range(148)]).sum()> 0.1):
-	while(i<3):
+	while(i<1000):
 		#try:
 		Y=activate_to_y(w0,13,training_x)
 		gradient_out=gradient_matrix(Y,training_t,training_x)
 		hess_mat=hessian_matrix(Y,training_x)
 		#w0=w0-np.transpose(np.matmul(np.linalg.inv(hess_mat),np.transpose(np.matrix(gradient_out))))
-		w0=w0-np.linalg.solve(hess_mat,gradient_out)
+		w0=w0+np.linalg.solve(hess_mat,gradient_out)
 		print('%f' % -sum([sum([t[j][i]*math.log(Y[j][i]) for i in range(3)]) for j in range(148)]) )
 		i=i+1
 		#except:
@@ -50,7 +50,7 @@ def gradient_matrix(y,training_t,training_x):
 	x_in=training_x.as_matrix()
 	grad=[]
 	for j in range(3):
-		tmp=[0 for i in range(13)]
+		tmp=[0.0 for i in range(13)]
 		for n in range(148):
 			tmp=tmp+(y[n][j]-t_in[n][j])*x_in[n]
 		grad.extend(tmp)
@@ -93,26 +93,27 @@ def logistic_3(training_t,training_x):
 	t=training_t.as_matrix()
 	Y=activate_to_y(w0,13,training_x)
 	gradient_out=[]
+	hess_mat=[]
 	#while(-np.matrix([([t[j][i]*math.log(Y[j][i]) for i in range(3)]) for j in range(148)]).sum()> 0.1):
 	while(i<10):
-		try:
-			Y=activate_to_y(w0,13,training_x)
-			gradient_out=gradient_matrix(Y,training_t,training_x)
-			hess_mat=hessian_matrix_3(Y,training_x)
-			#w0=w0-np.transpose(np.matmul(np.linalg.inv(hess_mat),np.transpose(np.matrix(gradient_out))))
-			w1=w1-np.linalg.solve(hess_mat['0'],gradient_out[:13])
-			w2=w2-np.linalg.solve(hess_mat['1'],gradient_out[13:26])
-			w3=w3-np.linalg.solve(hess_mat['2'],gradient_out[26:39])
-			w0=np.hstack((w1,w2,w3))
-			print('%f' % -sum([sum([t[j][i]*math.log(Y[j][i]) for i in range(3)]) for j in range(148)]) )
-			i=i+1
-		except:
-			print(str(i))
-			break
+		#try:
+		Y=activate_to_y(w0,13,training_x)
+		gradient_out=gradient_matrix(Y,training_t,training_x)
+		hess_mat=hessian_matrix_3(Y,training_x)
+		#w0=w0-np.transpose(np.matmul(np.linalg.inv(hess_mat),np.transpose(np.matrix(gradient_out))))
+		w1=w1+np.linalg.solve(hess_mat['0'],gradient_out[:13])
+		w2=w2+np.linalg.solve(hess_mat['1'],gradient_out[13:26])
+		w3=w3+np.linalg.solve(hess_mat['2'],gradient_out[26:39])
+		w0=np.hstack((w1,w2,w3))
+		print('%f' % -sum([sum([t[j][i]*math.log(Y[j][i]) for i in range(3)]) for j in range(148)]) )
+		i=i+1
+		# except:
+		# 	print(str(i))
+		# 	break
 	print("Iteration converge at i= %d" % i )
 	return {'weight':w0,'Y':Y,'hess':hess_mat,'grad':gradient_out}
 
-aaaa=logistic_3(X3_t,(df - df.mean())/df.std())
+aaaa=logistic_3(X3_t,X3_x)
 
 
 plt.hist(X3_x[,3], 50, normed=1, facecolor='g', alpha=0.75)
